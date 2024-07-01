@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_getx_starter/common_widget/app_button.dart';
 import 'package:get/get.dart';
 import 'package:o3d/o3d.dart';
 
@@ -54,48 +55,67 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ModelDetail(
-                  actions: [
-                    FilledButton(
-                      onPressed: () => controller.variantName = null,
-                      child: const Text('Default'),
+                Column(
+                  children:  [
+                    AppButton(title: "Default",action:  () => controller.variantName = null,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    titleColor:  Theme.of(context).colorScheme.background,
+
                     ),
-                    FilledButton(
-                      onPressed: () => controller.variantName = 'beach',
-                      child: const Text('beach'),
+                    SizedBox(height: 10,),
+                    AppButton(title: "beach",action:  () => controller.variantName = 'beach',
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      titleColor:  Theme.of(context).colorScheme.background,
+
                     ),
-                    FilledButton(
-                      onPressed: () => controller.variantName = 'street',
-                      child: const Text('street'),
+                    SizedBox(height: 10,),
+                    AppButton(title: "street",action:  () => controller.variantName = 'street',
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      titleColor:  Theme.of(context).colorScheme.background,
+
                     ),
-                    FilledButton(
-                      onPressed: () {
-                        controller.availableVariants().then((value) {
-                          setState(() {
-                            availableVariants = value;
-                          });
+                    SizedBox(height: 10,),
+                    AppButton(title: "available variants",action: () {
+                      controller.availableVariants().then((value) {
+                        setState(() {
+                          availableVariants = value;
                         });
-                      },
-                      child: const Text('available variants'),
+                      });
+                    },
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      titleColor:  Theme.of(context).colorScheme.background,
+
                     ),
+                    SizedBox(height: 10,),
+
                     if (availableVariants != null)
                       ListView.builder(
                         shrinkWrap: true,
                         itemCount: availableVariants!.length,
                         itemBuilder: (context, index) {
                           String variant = availableVariants![index];
-                          return Text('variant $index is $variant');
+                          return Text('variant $index is $variant', style: AppFonts.styleWithGilroyBoldText(
+                              color: Theme.of(context).colorScheme.onBackground,
+                              fSize: FontSizeValue.fontSize16),);
                         },
-                      )
+                      ),
+                    SizedBox(height: 10,),
                   ],
-                  o3d: O3D(
-                    controller: controller,
-                    progressBarColor: Colors.red,
-                    src: 'assets/glb/materials_variants_shoe.glb',
-                    // variantName: 'street',
+
+                ),
+                SizedBox(
+                  width: Get.width,
+                  height: Get.width,
+                  child: Card(
+                    color: Colors.red,
+                    child: O3D(
+                      controller: controller,
+                      progressBarColor: Colors.red,
+                      src: 'assets/glb/materials_variants_shoe.glb',
+                      // variantName: 'street',
+                    ),
                   ),
                 ),
-
                 const SizedBox(
                   height: 15,
                 ),
