@@ -1,5 +1,9 @@
 
-# Flutter GetX Starter
+# **flutter_3d_model**
+Demonstration to view / render 3d Object in flutter
+ using https://pub.dev/packages/o3d package
+
+ [Flutter GetX Starter](https://github.com/KasunHasanga/flutter_getx_starter)
 
 Welcome to the Flutter GetX Starter project! This is some basic architecture that I used to small to medium size flutter project. And also this
 repository will be good for beginners to get robust starting point for your Flutter applications, leveraging the power of GetX for state management, dependency injection, and route management. Below, you'll find a comprehensive guide to the features and setup instructions to get your application up and running.
