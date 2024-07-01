@@ -15,12 +15,6 @@ class OnBoardingController extends GetxController {
   final storage = const FlutterSecureStorage();
   RxString selectedLanguage ="si".obs;
 
-  @override
-  void onInit() {
-    // TODO: implement onInit
-
-    super.onInit();
-  }
 
   checkSessionStatus() async {
     await Future.delayed(const Duration(seconds: 5), () async {
