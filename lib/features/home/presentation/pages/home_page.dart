@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:o3d/o3d.dart';
 
 import '../../../../common_widget/app_bar.dart';
 
-import '../../../../common_widget/vehicle_picker.dart';
-import '../../../../config/colors.dart';
 import '../../../../config/constants.dart';
 import '../../../../config/fonts.dart';
 import '../controller/home_page_controller.dart';
 
 class HomePage extends StatefulWidget {
-  static const routeName = '/dashboard/home';
+  static const routeName = '/home';
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -33,6 +32,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  List<String>? availableVariants;
+  List<String>? availableAnimations;
+  final O3DController controller = O3DController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,20 +44,7 @@ class _HomePageState extends State<HomePage> {
           preferredSize: const Size.fromHeight(60),
           child: MainAppBar(
             title: 'home'.tr,
-            otherAction: [
-              GestureDetector(
-                onTap: () {
 
-                },
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    Icons.document_scanner,
-                    color: AppColors.kGreen,
-                  ),
-                ),
-              )
-            ],
           ),
         ),
         body: Padding(
@@ -64,46 +54,45 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () async {
-                    var vehicle = await VehiclePicker(
-                            vehicleList: homePageController.vehicleList,
-                            selectedVehicle:
-                                homePageController.selectedVehicle.value,
-                            context: context)
-                        .showPicker();
-
-                    homePageController.selectedVehicle.value = vehicle;
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    width: Get.width / 1.5,
-                    padding: const EdgeInsets.fromLTRB(15, 13, 10, 10),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(14)),
-                        border: Border.all(
-                            color: AppColors.kBorderColor, width: 1)),
-                    child: Obx(() {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            homePageController.selectedVehicle.value.nickname ??
-                                '-',
-                            style: AppFonts.styleWithGilroyMediumText(
-                                color: AppColors.kTextDarkGray,
-                                fSize: FontSizeValue.fontSize14,
-                                fontWeight: FontWeight.w400),
-                          ),
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: AppColors.kTextDarkGray,
-                          )
-                        ],
-                      );
-                    }),
+                ModelDetail(
+                  actions: [
+                    FilledButton(
+                      onPressed: () => controller.variantName = null,
+                      child: const Text('Default'),
+                    ),
+                    FilledButton(
+                      onPressed: () => controller.variantName = 'beach',
+                      child: const Text('beach'),
+                    ),
+                    FilledButton(
+                      onPressed: () => controller.variantName = 'street',
+                      child: const Text('street'),
+                    ),
+                    FilledButton(
+                      onPressed: () {
+                        controller.availableVariants().then((value) {
+                          setState(() {
+                            availableVariants = value;
+                          });
+                        });
+                      },
+                      child: const Text('available variants'),
+                    ),
+                    if (availableVariants != null)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: availableVariants!.length,
+                        itemBuilder: (context, index) {
+                          String variant = availableVariants![index];
+                          return Text('variant $index is $variant');
+                        },
+                      )
+                  ],
+                  o3d: O3D(
+                    controller: controller,
+                    progressBarColor: Colors.red,
+                    src: 'assets/glb/materials_variants_shoe.glb',
+                    // variantName: 'street',
                   ),
                 ),
 
@@ -120,9 +109,7 @@ class _HomePageState extends State<HomePage> {
                   height: 10,
                 ),
 
-                const SizedBox(
-                  height: 20,
-                ),
+
 
               ],
             ),
@@ -132,4 +119,48 @@ class _HomePageState extends State<HomePage> {
 
 
 
+}
+class ModelDetail extends StatelessWidget {
+  final List<Widget> actions;
+  final Widget o3d;
+
+  const ModelDetail({
+    super.key,
+    required this.actions,
+    required this.o3d,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.blue.shade100.withOpacity(.3),
+      elevation: 0,
+      margin: const EdgeInsets.all(16),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        width: double.infinity,
+        height: 400,
+        child: Column(
+          children: [
+            Wrap(
+              children: actions
+                  .map((child) => Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 6, vertical: 2),
+                child: child,
+              ))
+                  .toList(),
+            ),
+            Expanded(
+                child: Card(
+                  color: Colors.blue.shade100.withOpacity(.3),
+                  elevation: 0,
+                  child: AspectRatio(aspectRatio: 1, child: o3d),
+                ))
+          ],
+        ),
+      ),
+    );
+  }
 }
